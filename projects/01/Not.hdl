@@ -13,5 +13,6 @@ CHIP Not {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // Wire up the input signal to both terminals on the NAND gate
+    Nand(a=in,b=in,out=out);
 }
