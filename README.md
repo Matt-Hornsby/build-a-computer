@@ -1,5 +1,5 @@
 # build-a-computer
-I'm building a complete computing platform from foundational computer-science principles. I am following the excellent book ["The Elements of Computing Systems"](https://www.amazon.com/Elements-Computing-Systems-Building-Principles/dp/0262640686)
+I'm building a complete computing platform from foundational computer-science principles following the excellent book ["The Elements of Computing Systems"](https://www.amazon.com/Elements-Computing-Systems-Building-Principles/dp/0262640686)
 
 Computing and computer science is built from layers upon layers of elegant abstractions. I'll be starting a couple levels of abstraction above raw physics (no building of physical circuits from transistors... yet). The plan:
 
