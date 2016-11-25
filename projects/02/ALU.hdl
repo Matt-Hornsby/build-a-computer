@@ -72,10 +72,9 @@ CHIP ALU {
 
     // Choose whether to use the normal or negated output
     Mux16(a=functionOutput, b=negatedFunctionOutput, sel = no, out[15] = msb, out[0..7] = or1, out[8..15] = or2, out=out);
-    //Mux16(a=finalOutput, b = false, sel = false, out = out);
 
     // Now need to test to see if output is zero
-    //And(a = finalOutput, b = false, out = zr);
+    // If any bit is set to 1, then we set zr to 1
     Or8Way(in=or1,out=or1Out);
     Or8Way(in=or2,out=or2Out);
     Or(a=or1Out, b=or2Out, out=orOut);
