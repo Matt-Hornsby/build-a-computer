@@ -7,7 +7,7 @@
  * The ALU (Arithmetic Logic Unit).
  * Computes one of the following functions:
  * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
- * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
+ * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs,
  * according to 6 input bits denoted zx,nx,zy,ny,f,no.
  * In addition, the ALU computes two 1-bit outputs:
  * if the ALU output == 0, zr is set to 1; otherwise zr is set to 0;
@@ -27,8 +27,8 @@
 // if (out < 0) set ng = 1
 
 CHIP ALU {
-    IN  
-        x[16], y[16],  // 16-bit inputs        
+    IN
+        x[16], y[16],  // 16-bit inputs
         zx, // zero the x input?
         nx, // negate the x input?
         zy, // zero the y input?
@@ -36,11 +36,52 @@ CHIP ALU {
         f,  // compute out = x + y (if 1) or x & y (if 0)
         no; // negate the out output?
 
-    OUT 
+    OUT
         out[16], // 16-bit output
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    // outx & outy will contain zero if the zero bits are set (zx & zy)
+    // otherwise, they will contain the corresponding input values for x or y
+    Mux16(a = x, b = false, sel = zx, out = outx);
+    Mux16(a = y, b = false, sel = zy, out = outy);
+
+    // Invert x and y in case nx or ny are set
+    Not16(in = outx, out = notx);
+    Not16(in = outy, out = noty);
+
+    // Select the inverted values if nx or ny are set
+    Mux16(a = outx, b = notx, sel = nx, out = outNotx);
+    Mux16(a = outy, b = noty, sel = ny, out = outNoty);
+
+    // Prepare the calculations so when it gets time to inspect f, we
+    // already have the values ready.
+
+    // x + y
+    Add16(a = outNotx, b = outNoty, out = aPlusb);
+
+    // x & y
+    And16(a = outNotx, b = outNoty, out = aAndb);
+
+    // Select one of the functions
+    Mux16(a = aAndb, b = aPlusb, sel = f, out = functionOutput);
+
+    // Negate the output
+    Not16(in=functionOutput, out=negatedFunctionOutput);
+
+    // Choose whether to use the normal or negated output
+    Mux16(a=functionOutput, b=negatedFunctionOutput, sel = no, out[15] = msb, out[0..7] = or1, out[8..15] = or2, out=out);
+    //Mux16(a=finalOutput, b = false, sel = false, out = out);
+
+    // Now need to test to see if output is zero
+    //And(a = finalOutput, b = false, out = zr);
+    Or8Way(in=or1,out=or1Out);
+    Or8Way(in=or2,out=or2Out);
+    Or(a=or1Out, b=or2Out, out=orOut);
+    Not(in=orOut,out=zr);
+
+    // Check if it is less than zero. If so, the MSB will be one
+    And(a=msb, b = true, out = ng);
+
 }
