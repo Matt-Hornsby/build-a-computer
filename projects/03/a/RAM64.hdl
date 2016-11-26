@@ -19,7 +19,6 @@ CHIP RAM64 {
     DMux8Way(in = load, sel = address[3..5], a = ram0, b = ram1, c = ram2, d = ram3, e = ram4, f = ram5, g = ram6, h = ram7);
 
     // 3 LSB bits contain the register to use inside the selected RAM8 CHIP
-
     RAM8(in = in, load = ram0, address = address[0..2], out = o0);
     RAM8(in = in, load = ram1, address = address[0..2], out = o1);
     RAM8(in = in, load = ram2, address = address[0..2], out = o2);
@@ -29,5 +28,4 @@ CHIP RAM64 {
     RAM8(in = in, load = ram6, address = address[0..2], out = o6);
     RAM8(in = in, load = ram7, address = address[0..2], out = o7);
     Mux8Way16(sel = address[3..5], a = o0, b = o1, c = o2, d = o3, e = o4, f = o5, g = o6, h = o7, out = out);
-    //Mux8Way16(sel = address[3..5], a = o0, b = o1, c = o2, d = o3, e = o4, f = o5, g = o6, h = o7, out = out);
 }
